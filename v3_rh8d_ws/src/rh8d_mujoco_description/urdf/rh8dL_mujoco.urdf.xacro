@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="RH8DL">
+
+    <!-- Include base_link, Base:1, and Forearm:1 -->
+    <xacro:include filename="$(find rh8d_mujoco_description)/urdf/rh8dL_base_forearm.xacro"/>
+
+    <!-- Include Palm and palmL -->
+    <xacro:include filename="$(find rh8d_mujoco_description)/urdf/rh8dL_palm.xacro"/>
+
+    <!-- Include Fingers -->
+    <xacro:include filename="$(find rh8d_mujoco_description)/urdf/rh8dL_thumb.xacro"/>
+    <xacro:include filename="$(find rh8d_mujoco_description)/urdf/rh8dL_index.xacro"/>
+    <xacro:include filename="$(find rh8d_mujoco_description)/urdf/rh8dL_middle.xacro"/>
+    <xacro:include filename="$(find rh8d_mujoco_description)/urdf/rh8dL_ring.xacro"/>
+    <xacro:include filename="$(find rh8d_mujoco_description)/urdf/rh8dL_small.xacro"/>
+
+    <!-- MuJoCo ros2_control definitions -->
+    <xacro:include filename="$(find rh8d_mujoco_control)/description/rh8dL_mujoco_ros2_control.xacro"/>
+</robot>

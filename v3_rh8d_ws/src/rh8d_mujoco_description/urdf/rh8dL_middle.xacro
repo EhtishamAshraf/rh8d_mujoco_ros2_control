@@ -1,0 +1,116 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <!-- Middle Proximal -->
+    <link name="Middle_Proximal">
+    <inertial>
+        <origin xyz="-0.00506285403059 -0.000180270391627 -0.0109174207572" rpy="0 0 0"/>
+        <mass value="0.00525864"/>
+        <inertia ixx="5.33998e-07" ixy="2.78487e-10" ixz="-8.95438e-13" iyy="5.63087e-07" iyz="3.11448e-08" izz="1.84796e-07"/>
+    </inertial>
+    <visual>
+        <origin xyz="-0.00506247065308 0 -0.0129379251166" rpy="0 0 0"/>
+        <geometry>
+        <mesh filename="package://rh8d_mujoco_description/meshes/phalanx.stl" scale="0.001 0.001 0.001"/>
+        </geometry>
+        <material name="Middle_Proximal_color">
+        <color rgba="0.74902 0.74902 0.74902 1.0"/>
+        </material>
+    </visual>
+    <collision>
+        <origin xyz="-0.00506247065308 0 -0.0129379251166" rpy="0 0 0"/>
+        <geometry>
+        <mesh filename="package://rh8d_mujoco_description/meshes/phalanx.stl" scale="0.001 0.001 0.001"/>
+        </geometry>
+    </collision>
+    </link>
+
+    <!-- Joint: palmL:1 -> Middle_Proximal -->
+    <joint name="Middle_Proximal--palmL:1" type="revolute">
+        <origin xyz="-0.0095654 -0.082818 0.00164059" rpy="-1.74598210711 -0.0859373918966 0.0151910468121"/>
+        <axis xyz="-1.0 0.0 0.0"/>
+        <parent link="palmL:1"/>
+        <child link="Middle_Proximal"/>
+        <dynamics damping="0.05" friction="0.005"/>
+        <limit effort="2.5" lower="0" upper="1.57079632679" velocity="5.0"/>
+    </joint>
+
+    <!-- Middle Middle -->
+    <link name="Middle_Middle">
+    <inertial>
+        <origin xyz="-0.00506285403059 -0.000180270391627 -0.0109174207572" rpy="0 0 0"/>
+        <mass value="0.00525864"/>
+        <inertia ixx="5.33998e-07" ixy="2.78487e-10" ixz="-8.95438e-13" iyy="5.63087e-07" iyz="3.11448e-08" izz="1.84796e-07"/>
+    </inertial>
+    <visual>
+        <origin xyz="-0.00506256941423 0 -0.0129379268531" rpy="0 0 0"/>
+        <geometry>
+        <mesh filename="package://rh8d_mujoco_description/meshes/phalanx.stl" scale="0.001 0.001 0.001"/>
+        </geometry>
+        <material name="Middle_Middle_color">
+        <color rgba="0.74902 0.74902 0.74902 1.0"/>
+        </material>
+    </visual>
+    <collision>
+        <origin xyz="-0.00506256941423 0 -0.0129379268531" rpy="0 0 0"/>
+        <geometry>
+        <mesh filename="package://rh8d_mujoco_description/meshes/phalanx.stl" scale="0.001 0.001 0.001"/>
+        </geometry>
+    </collision>
+    </link>
+
+    <!-- Joint: Middle_Proximal -> Middle_Middle -->
+    <joint name="Middle_Middle--Middle_Proximal" type="revolute">
+        <origin xyz="6.25377180185e-05 0 -0.0258750444163" rpy="0 0 0"/>
+        <axis xyz="-1.0 0.0 0.0"/>
+        <parent link="Middle_Proximal"/>
+        <child link="Middle_Middle"/>
+        
+        <mimic joint="Middle_Proximal--palmL:1"
+                multiplier="0.9"
+                offset="0.0"/>
+
+        <dynamics damping="0.02" friction="0.0"/>
+        <limit effort="2.5" lower="0" upper="1.57079632679" velocity="5.0"/>
+    </joint>
+
+    <!-- Middle Distal -->
+    <link name="Middle_Distal">
+    <inertial>
+        <origin xyz="-0.00505694558295 -0.00237044127658 -0.0113154280951" rpy="0 0 0"/>
+        <mass value="0.00486055"/>
+        <inertia ixx="4.61031e-07" ixy="7.56173e-11" ixz="5.71507e-11" iyy="4.72548e-07" iyz="-5.64479e-08" izz="3.05155e-07"/>
+    </inertial>
+    <visual>
+        <origin xyz="-0.00506246830541 0 -3.8022196186e-07" rpy="0 0 0"/>
+        <geometry>
+        <mesh filename="package://rh8d_mujoco_description/meshes/tip.stl" scale="0.001 0.001 0.001"/>
+        </geometry>
+        <material name="Middle_Distal_color">
+        <color rgba="0.74902 0.74902 0.74902 1.0"/>
+        </material>
+    </visual>
+    <collision>
+        <origin xyz="-0.00506246830541 0 -3.8022196186e-07" rpy="0 0 0"/>
+        <geometry>
+        <mesh filename="package://rh8d_mujoco_description/meshes/tip.stl" scale="0.001 0.001 0.001"/>
+        </geometry>
+    </collision>
+    </link>
+
+    <!-- Joint: Middle_Middle -> Middle_Distal -->
+    <joint name="Middle_Distal--Middle_Middle" type="revolute">
+        <origin xyz="6.24372402321e-05 0 -0.0258750426798" rpy="0 0 0"/>
+        <axis xyz="-1.0 0.0 0.0"/>
+        <parent link="Middle_Middle"/>
+        <child link="Middle_Distal"/>
+                
+        <mimic joint="Middle_Middle--Middle_Proximal"
+            multiplier="0.9"
+            offset="0.0"/>
+
+        <dynamics damping="0.02" friction="0.0"/>
+        <limit effort="2.5" lower="0" upper="1.57079632679" velocity="5.0"/>
+    </joint>
+
+</robot>
