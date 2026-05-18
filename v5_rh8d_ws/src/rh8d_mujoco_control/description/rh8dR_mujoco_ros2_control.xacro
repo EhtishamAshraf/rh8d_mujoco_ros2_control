@@ -1,0 +1,99 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:macro name="rh8d_mujoco_ros2_control" params="">
+    <ros2_control name="MujocoSystem" type="system">
+
+      <hardware>
+        <plugin>mujoco_ros2_control/MujocoSystem</plugin>
+      </hardware>
+
+      <!-- Joint-backed MuJoCo actuators -->
+      <joint name="pos_forearm">
+        <command_interface name="position" min="-1.5708" max="1.5708"/>
+        <state_interface name="position"/>
+        <state_interface name="effort"/>
+      </joint>
+
+      <joint name="pos_palm_axis">
+        <command_interface name="position" min="-1.5708" max="1.5708"/>
+        <state_interface name="position"/>
+        <state_interface name="effort"/>
+      </joint>
+
+      <joint name="pos_palm_assembly">
+        <command_interface name="position" min="-0.785398" max="0.785398"/>
+        <state_interface name="position"/>
+        <state_interface name="effort"/>
+      </joint>
+
+      <joint name="pos_thumb_axis">
+        <command_interface name="position" min="0.0" max="1.5708"/>
+        <state_interface name="position"/>
+        <state_interface name="effort"/>
+      </joint>
+
+      <!-- Tendon-backed MuJoCo actuators -->
+      <joint name="pos_index_tendon">
+        <command_interface name="position" min="0.0" max="1.5708"/>
+        <state_interface name="position"/>
+        <state_interface name="effort"/>
+      </joint>
+
+      <joint name="pos_middle_tendon">
+        <command_interface name="position" min="0.0" max="1.5708"/>
+        <state_interface name="position"/>
+        <state_interface name="effort"/>
+      </joint>
+
+      <joint name="pos_ring_small_tendon">
+        <command_interface name="position" min="0.0" max="1.5708"/>
+        <state_interface name="position"/>
+        <state_interface name="effort"/>
+      </joint>
+
+      <joint name="pos_thumb_tendon">
+        <command_interface name="position" min="0.0" max="1.5708"/>
+        <state_interface name="position"/>
+        <state_interface name="effort"/>
+      </joint>
+
+      <sensor name="palm_range">
+          <state_interface name="value"/>
+      </sensor>
+
+      <sensor name="thumb_tip_force">
+          <state_interface name="x"/>
+          <state_interface name="y"/>
+          <state_interface name="z"/>
+      </sensor>
+
+      <sensor name="index_tip_force">
+          <state_interface name="x"/>
+          <state_interface name="y"/>
+          <state_interface name="z"/>
+      </sensor>
+      <sensor name="middle_tip_force">
+          <state_interface name="x"/>
+          <state_interface name="y"/>
+          <state_interface name="z"/>
+      </sensor>
+
+      <sensor name="ring_tip_force">
+          <state_interface name="x"/>
+          <state_interface name="y"/>
+          <state_interface name="z"/>
+      </sensor>
+
+      <sensor name="small_tip_force">
+          <state_interface name="x"/>
+          <state_interface name="y"/>
+          <state_interface name="z"/>
+      </sensor>
+
+    </ros2_control>
+  </xacro:macro>
+
+  <xacro:rh8d_mujoco_ros2_control/>
+
+</robot>

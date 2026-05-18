@@ -1,0 +1,23 @@
+controller_manager:
+  ros__parameters:
+    update_rate: 1000
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+    hand_forward_position_controller:
+      type: forward_command_controller/ForwardCommandController
+
+hand_forward_position_controller:
+  ros__parameters:
+    joints:
+      - pos_forearm
+      - pos_palm_axis
+      - pos_palm_assembly
+      - pos_thumb_axis
+      - pos_index_tendon
+      - pos_middle_tendon
+      - pos_ring_small_tendon
+      - pos_thumb_tendon
+
+    interface_name: position
