@@ -1,0 +1,9 @@
+# Ignore VSCode files
+.vscode/
+
+# Ignore build, log, and Python cache
+build/
+install/
+log/
+*.pyc
+__pycache__/
