@@ -1,28 +1,68 @@
-# RH8D Hand Simulation (ROS 2 + MuJoCo)
+# RH8D Hand Simulation (MuJoCo + ROS 2 Control)
 
-This project simulates the **RH8D tendon-driven robotic hand** using **MuJoCo** and **ROS 2**. The simulation is controlled directly through a ROS 2 node that:
+This project simulates the **RH8D tendon-driven robotic hand** using **MuJoCo** and **ROS 2 Control**.
 
-1. Loads the MuJoCo MJCF model.
-2. Opens the MuJoCo viewer.
-3. Subscribes to hand command messages.
-4. Writes commands directly to MuJoCo actuators.
-5. Publishes joint states, tendon states, fingertip forces, and contact status.
+In this project, the hand is controlled through the standard **ros2_control** framework using a modified `mujoco_ros2_control` plugin. Check out the [Pure ROS2 version](https://github.com/EhtishamAshraf/rh8d_mujoco_ros2.git).
 
-The main advantage of using MuJoCo is that it supports **native spatial tendon modeling**, which is more suitable for simulating the tendon-driven RH8D hand than Gazebo mimic-joint approximation.
+The system uses:
+
+1. A MuJoCo MJCF model for physics simulation.
+2. A URDF/Xacro robot description for ROS 2 visualization and control interfaces.
+3. A modified `mujoco_ros2_control` plugin.
+4. ROS 2 Control controllers such as `joint_state_broadcaster` and trajectory/position controllers.
+5. MuJoCo native spatial tendons for RH8D tendon-driven finger motion.
+
+The main advantage of using MuJoCo is that it supports **native spatial tendon modeling**, which is more suitable for simulating the tendon-driven RH8D hand than the Gazebo mimic-joint approximation.
 
 Tested on:
 
 - ROS 2 Humble
 - MuJoCo
+- ros2_control
+- Modified `mujoco_ros2_control` plugin
 
 Demo video:
-[![Demo Video](https://github.com/EhtishamAshraf/rh8d_mujoco_ros2/blob/42d79a12e8eb45b62df5007362b32549ec2f6697/assets/ros2_cylinder.png)](https://youtu.be/hQMjRyygGjY)
+
+[![Demo Video](https://github.com/EhtishamAshraf/rh8d_mujoco_ros2_control/blob/6e2285dd5158654c70342f12fa1c80b0b7976ec1/assets/6.png)](https://www.youtube.com/watch?v=uwueH81qcI0)
 
 ---
 
+## Repository Branches
+
+This repository is organized into separate branches for the two RH8D hand configurations. One branch contains the **left-hand simulation**, while the other branch contains the **right-hand simulation**. 
+
+Both branches follow the same MuJoCo + ROS 2 Control architecture, but the robot description, MJCF model, joint names, actuator mappings, and mesh orientations are adjusted according to the corresponding hand side.
+
+
+## Project-Specific Modifications to the `mujoco_ros2_control` Plugin
+
+The original [`mujoco_ros2_control` plugin](https://github.com/moveit/mujoco_ros2_control) was modified for the RH8D tendon-driven hand simulation. The main modifications are:
+
+- Added support for tendon-driven finger control, where a ROS 2 Control command can be sent to a MuJoCo tendon actuator instead of directly commanding every finger joint.
+
+- Added separate URDF joint state export so real movable finger joints can be exposed as ROS 2 Control state interfaces, including position, velocity, and effort, and published through `joint_state_broadcaster` to `/joint_states`.
+
+- Added support for the palm rangefinder sensor:
+  - `palm_range/value`
+
+- Added support for RH8D fingertip force sensors:
+  - `thumb_tip_force`
+  - `index_tip_force`
+  - `middle_tip_force`
+  - `ring_tip_force`
+  - `small_tip_force`
+
+- Example: 3D sensor state interfaces:
+  - `index_tip_force/x`
+  - `index_tip_force/y`
+  - `index_tip_force/z`
+
+---
+
+
 ## Build and Launch Instructions
 
-Go to the workspace. Build the packages:
+Go to the workspace and Build the packages:
 
 ```bash
 colcon build
@@ -33,127 +73,35 @@ Source the workspace:
 ```bash
 source install/setup.bash
 ```
-Run the nodes:
-```bash
-ros2 run rh8d_mujoco_sim rh8d_mujoco_node --ros-args -p model_path:=/home/ehtisham/Desktop/Robotics_uclv/03_PROJECTS/P1_rh8d_sim/2-MuJoCo/ros2/v2_rh8d_ws/src/rh8d_mujoco_sim/assets/mjcf/scene.xml
 
-```
+Launch the MuJoCo ROS 2 Control simulation:
 
 ```bash
-ros2 run rh8d_mujoco_sim rh8d_hand_test
+ros2 launch rh8d_mujoco_control rh8d_mujoco.launch.py
 ```
+
+Check active controllers:
+
+```bash
+ros2 control list_controllers
+```
+Run the ROS2 node for controlling the hand, if you want to pick the ball instead of the cylinder, please adjust the XML file here: rh8d_mujoco_description/mjcf/rh8dL.xml (you just need to uncomment the relevant section)
+
+```bash
+ros2 run rh8d_mujoco_control rh8dL_object_pick_JointTrajectory
+```
+
+Picking Ball video:
+
+[![Demo Video](https://github.com/EhtishamAshraf/rh8d_mujoco_ros2_control/blob/6e2285dd5158654c70342f12fa1c80b0b7976ec1/assets/8.png)](https://www.youtube.com/watch?v=wV0Q-Gtomvw)
 
 ---
 
-## MuJoCo Model
+## References
 
-The hand model is defined using an MJCF XML file:
-
-```text
-assets/mjcf/scene.xml
+1. To convert urdf file to xml file use the following command: [Reference](https://www.youtube.com/watch?v=v2OfmQaoIH4)
+```bash
+compile file_name.urdf file_name.xml
 ```
 
-The model contains:
-
-- RH8D hand body structure
-- STL visual meshes
-- Collision geoms
-- Revolute joints
-- Spatial tendons
-- Tendon actuators
-- Tendon position sensors
-- Actuator force sensors
-- Palm rangefinder sensor
-- Fingertip force sensors
-- Contact exclusions
-
-In the MJCF file, the mesh directory is defined as below. The mesh folder must be located relative to the MJCF file.
-
-```xml
-<compiler angle="radian" meshdir="../meshes"/>
-```
-
-#### Tendon Modeling
-
-The RH8D hand is tendon-driven. In MuJoCo, this is modeled using **spatial tendons**. This is more physically meaningful than the Gazebo version, where tendon behavior had to be approximated using mimic joints.
-
-```xml
-<tendon>
-  <spatial name="idx_flex_spatial">
-    <site site="palm_flexor_origin_idx"/>
-    <site site="idx_guide_p"/>
-    <site site="idx_guide_m"/>
-    <site site="idx_guide_d"/>
-    <site site="idx_anchor"/>
-  </spatial>
-</tendon>
-```
-
-The ring and small fingers are coupled using a MuJoCo equality constraint. This means the small finger tendon follows the ring finger tendon.
-
-```xml
-<equality>
-  <tendon tendon1="sml_flex_spatial" tendon2="ring_flex_spatial"
-          polycoef="0 1 0 0 0"
-          solref="0.08 1.0"
-          solimp="0.90 0.99 0.002"/>
-</equality>
-```
-
----
-
-## ROS 2 Nodes
-
-This project contains two main ROS 2 nodes.
-
----
-
-#### 1. RH8D MuJoCo Simulation Node
-
-Main responsibility:
-
-- Load the MJCF model.
-- Start the MuJoCo passive viewer.
-- Subscribe to hand commands.
-- Write commands directly to MuJoCo actuators.
-- Step the MuJoCo simulation.
-- Publish hand state.
-- Publish fingertip forces.
-- Publish contact status.
-
-#### 2. RH8D Gesture / Object Pick Controller
-
-Main responsibility:
-
-- Publish gesture commands to `/rh8d/command`.
-- Subscribe to `/rh8d/state`.
-- Subscribe to `/rh8d/contacts`.
-- Detect object presence using the palm range sensor.
-- Close the hand only when an object is detected.
-- Detect stable fingertip contacts.
-- Latch tendon commands after grasp contact.
-- Execute a predefined gesture sequence.
-
-#### Flow of the controller
-
-The controller does not immediately close the hand. Before closing, it checks whether an object is detected by the palm rangefinder. If the object is not detected, the hand stays open.
-
-```python
-range_threshold = 0.25
-```
-
-During the hand close gesture, the controller monitors fingertip contacts. Stable contact is required for multiple control cycles:
-
-```python
-required_contact_cycles = 5
-```
-
-The MuJoCo simulation node detects contact using fingertip force sensors. Contact is considered true when the Z-force magnitude is greater than:
-
-```python
-contact_threshold = 0.50
-```
-
-After stable grasp contact is detected, the controller latches the current tendon values. This prevents the hand from continuing to close after the object is already grasped.
-
----
+2. MuJoCo ROS2 Control plugin examples can be found [here](https://github.com/moveit/mujoco_ros2_control_examples)
