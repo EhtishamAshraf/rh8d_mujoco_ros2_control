@@ -36,7 +36,7 @@ Both branches follow the same MuJoCo + ROS 2 Control architecture, but the robot
 
 ## Project-Specific Modifications to the `mujoco_ros2_control` Plugin
 
-The original [`mujoco_ros2_control` plugin](https://github.com/moveit/mujoco_ros2_control) was modified for the RH8D tendon-driven hand simulation. The main modifications are:
+The original [`mujoco_ros2_control plugin`](https://github.com/moveit/mujoco_ros2_control) was modified for the RH8D tendon-driven hand simulation. The main modifications are:
 
 - Added support for tendon-driven finger control, where a ROS 2 Control command can be sent to a MuJoCo tendon actuator instead of directly commanding every finger joint.
 
@@ -85,13 +85,14 @@ Check active controllers:
 ```bash
 ros2 control list_controllers
 ```
-Run the ROS2 node for controlling the hand, if you want to pick the ball instead of the cylinder, please adjust the XML file here: rh8d_mujoco_description/mjcf/rh8dL.xml (you just need to uncomment the relevant section)
+Run the ROS2 node for controlling the hand:
 
 ```bash
 ros2 run rh8d_mujoco_control rh8dL_object_pick_JointTrajectory
 ```
 
-Picking Ball video:
+**Picking Ball video:**
+If you want to pick the ball instead of the cylinder, please adjust the XML file here: rh8d_mujoco_description/mjcf/rh8dL.xml (you just need to uncomment the relevant section)
 
 [![Demo Video](https://github.com/EhtishamAshraf/rh8d_mujoco_ros2_control/blob/6e2285dd5158654c70342f12fa1c80b0b7976ec1/assets/8.png)](https://www.youtube.com/watch?v=wV0Q-Gtomvw)
 
@@ -99,7 +100,7 @@ Picking Ball video:
 
 ## References
 
-1. To convert urdf file to xml file use the following command: [Reference](https://www.youtube.com/watch?v=v2OfmQaoIH4)
+1. To convert urdf file to xml file, use the following command: [Reference](https://www.youtube.com/watch?v=v2OfmQaoIH4)
 ```bash
 compile file_name.urdf file_name.xml
 ```
